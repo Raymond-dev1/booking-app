@@ -1,10 +1,12 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { drizzle } from 'drizzle-orm/neon-http';
 import { eq } from 'drizzle-orm';
 import { users } from './db/schema.js'; 
-import {Pool } from 'pg';
+import { neon } from "@neondatabase/serverless";
+import {config } from 'dotenv';
+config()
 
-const client = new Pool({ connectionString: process.env.DATABASE_URL });
-const db = drizzle(client);
+const sql =neon(process.env.DATABASE_URL! );
+const db = drizzle({client: sql})
 
 async function testConnection() {
   console.log('--- CREATE ---');
