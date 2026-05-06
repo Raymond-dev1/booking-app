@@ -11,8 +11,8 @@ const db = drizzle({client: sql})
 async function testConnection() {
   console.log('--- CREATE ---');
   const inserted = await db.insert(users).values({
-    firstName: 'John',
-    lastName: 'Doe',
+    first_name: 'John',
+    last_name: 'Doe',
     email: 'john@test.com',
     password_hash: 'hashedpassword123',
     is_active: true,
