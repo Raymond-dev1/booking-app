@@ -26,7 +26,7 @@ export const createCustomer= async ({first_name, last_name, email, password}: Cr
             is_active: true,
             role: "customer"
         }).returning()
-        const token = accessToken(newCustomer[0]!.id.toString())
+        const token = accessToken(newCustomer[0]!.id)
         const {password_hash, ...customerData} =newCustomer[0]!
         
         return {status:201, success: true, message: "customer created successfully", token , data: customerData}
