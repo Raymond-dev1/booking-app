@@ -2,11 +2,11 @@ import {Router} from "express"
 const router:Router =Router()
 
 // import { authenticate, authorize } from "../middlewares/auth.middleware.js"
-import { CreateCustomerController,LoginCustomerController ,GetCustomerController} from "../controllers/auth.controller.js"
+import { CreateUserController, LoginUserController, GetUserController} from "../controllers/auth.controller.js"
 
-router.post("/register-customer", CreateCustomerController, )
-router.post("/login-customer", LoginCustomerController)
-router.get("/get-customer/:id",GetCustomerController)
+router.post("/register", CreateUserController, )
+router.post("/login", LoginUserController)
+router.get("/get/:id",GetUserController)
 
 
 export default router;

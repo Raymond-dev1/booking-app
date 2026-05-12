@@ -6,25 +6,26 @@ const router = express.Router();
 
 jest.setTimeout(15000); 
 
-// describe("POST /auth/register-customer", () => {
-//   it("returns status code 201 if first name is passed", async () => {
-//     const res = await request(app)
-//       .post("/auth/register-customer")
-//       .send({
-//         first_name: "john",
-//         last_name: "doe",
-//         email: "john.doe@example.com",
-//         password: "password123",
-//       });
-//     expect(res.statusCode).toEqual(201);
-//     expect(res.body.data.role).toEqual("customer");
-//   });
-// });
+describe("POST /auth/register-customer", () => {
+  it("returns status code 201 if user is created successfully", async () => {
+    const res = await request(app)
+      .post("/auth/register")
+      .send({
+        first_name: "koe",
+        last_name: "doe",
+        email: "koe.doe@example.com",
+        password: "password223",
+        role: "customer"
+      });
+    expect(res.statusCode).toEqual(201);
+    expect(res.body.data.role).toEqual("customer");
+  });
+});
 
-describe("POST /auth/login-customer", () => {
+describe("POST /auth/login", () => {
   it("returns status code 200 if user logged in successfuly", async () => {
     const res = await request(app)
-      .post("/auth/login-customer")
+      .post("/auth/login")
       .send({
         email: "john.doe@example.com",
         password: "password123",

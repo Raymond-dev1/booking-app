@@ -16,62 +16,70 @@ type LoginUserInput= {
     password:string;
 }
 
-export const createCustomer= async ({first_name, last_name, email, password}: CreateUserInput) =>{
+type Role ="guest" | "customer" |"owner" |"staff"
+
+//creates user
+export const createUser= async ({first_name, last_name, email, password}: CreateUserInput , role:Role) =>{
     try{
-        const existingCustomer =await db.select().from(users).where(eq(users.email,email))
-        if(existingCustomer.length >0){
+        const existingUser =await db.select().from(users).where(eq(users.email,email))
+        if(existingUser.length >0){
             return{status:409,success: false, message: "user already Exists"}
         }
+
+        const validRoles: Role[] =['guest', 'customer', 'owner', 'staff']
+        if(!validRoles.includes(role)){
+            return{status:400, success: false, message: "invalid roles"}
+        }
+        if(role == "staff"){
+            return{status: 403, success:false, message: "staffs accounts are only created by invitation"}
+        }
         const hashed = await bcrypt.hash(password, 10)
-        const newCustomer = await db.insert(users).values({
+        const newUser = await db.insert(users).values({
             first_name: first_name,
             last_name,
             email,
             password_hash: hashed,
             is_active: true,
-            role: "customer"
+            role
         }).returning()
                 
-        const token  =accessToken(existingCustomer[0]!.id,existingCustomer[0]!.role ?? "customer")
-        const {password_hash, ...customerData} =newCustomer[0]!
+        const token  =accessToken(newUser[0]!.id,newUser[0]!.role ?? role)
+        const {password_hash, ...userData} =newUser[0]!
         
-        return {status:201, success: true, message: "customer created successfully", token , data: customerData}
+        return {status:201, success: true, message: "user created successfully", token , data: userData}
     }catch(error){
-        console.error("Error creating customer:",error)
+        console.error("Error creating user:",error)
         return {status:500, success: false, message: "internal server error"}
     }
 }
 
-export const loginCustomer = async ({email, password}: LoginUserInput) =>{
+//Logins user
+export const loginUser = async ({email, password}: LoginUserInput) =>{
     try{
-        const existingCustomer  = await db.select().from(users).where(eq(users.email, email));
+        const existingUser  = await db.select().from(users).where(eq(users.email, email));
 
-        if(existingCustomer.length ===0 ){
+        if(existingUser.length ===0 ){
             return{status:404, success:false, message: "user not found"}
         }
 
-        const isPasswordValid = await bcrypt.compare(password,existingCustomer[0]!.password_hash!)
+        const isPasswordValid = await bcrypt.compare(password,existingUser[0]!.password_hash!)
         if(!isPasswordValid){
             return{status:401, success:false, message: "invalid credentials"}
         }
 
-        const { password_hash, ...customerData }= existingCustomer[0]!
+        const { password_hash, ...userData }= existingUser[0]!
+        const role = existingUser[0]!.role!
 
-        const role = existingCustomer[0]!.role
-        if(role !== "customer"){
-            return{status: 403, success:false, message: "Forbidden ; insufficient permissions"}
-        }
-        
-        const token  =accessToken(existingCustomer[0]!.id, existingCustomer[0]!.role ?? "customer")
-        return {status:200, success: true, token, message: "login successful", data: customerData}
+        const token  =accessToken(existingUser[0]!.id, role )
+        return {status:200, success: true, token, message: "login successful", data: userData}
     }catch(error){
-        console.error("Error loggin in customer:", error)
+        console.error("Error loggin in user:", error)
         return{status:500,success:false, message: "internal server error"}
     }
 }
 
-
-export const getCustomerById =async (id:number) =>{
+//Fetches user
+export const getUserById =async (id:number) =>{
     try{
         const customer = await db.select().from(users).where(eq(users.id, id));
         return{status:200, success:true, message: "user ", customer }

@@ -1,25 +1,25 @@
-import { createCustomer, getCustomerById, loginCustomer } from "../services/auth.service.js";
+import { createUser, getUserById, loginUser } from "../services/auth.service.js";
 
 
-export const CreateCustomerController =async (req:any, res:any) =>{
+export const CreateUserController =async (req:any, res:any) =>{
     try{
-        const{ first_name, last_name, email, password } = req.body
+        const{ first_name, last_name, email, password, role } = req.body
 
-        const newCustomer = await createCustomer({first_name, last_name, email, password})
-        if(!newCustomer.success){
-            return res.status(newCustomer.status).json(newCustomer)
+        const newUser = await createUser({first_name, last_name, email, password}, role)
+        if(!newUser.success){
+            return res.status(newUser.status).json(newUser)
         }
-        return res.status(newCustomer.status).json(newCustomer)
+        return res.status(newUser.status).json(newUser)
     }catch(error){
         return res.status(500).json({status:500,success:false,message: "internal server error"})
     }
 }
 
-export const LoginCustomerController = async (req:any, res:any) => {
+export const LoginUserController = async (req:any, res:any) => {
     try{
         const {email, password} = req.body
 
-        const customer = await loginCustomer({email, password})
+        const customer = await loginUser({email, password})
         if(!customer.success){
             return res.status(customer.status).json(customer)
         }
@@ -30,16 +30,16 @@ export const LoginCustomerController = async (req:any, res:any) => {
     }
 }
 
-export const  GetCustomerController = async (req:any, res:any) =>{
+export const  GetUserController = async (req:any, res:any) =>{
     try{
         const id = req.user.id
-        const customer =await getCustomerById(id)
-        if(!customer.success){
-            return res.status(customer.status).json(customer)
+        const user =await getUserById(id)
+        if(!user.success){
+            return res.status(user.status).json(user)
         }
-        return res.status(customer.status).json(customer)
+        return res.status(user.status).json(user)
     }catch(error){
-        console.error("Error in fetch customer controller", error)
+        console.error("Error in fetch user controller", error)
         return res.status(500).json({status:500,success:false,message: "internal server error"})
     }
 }
