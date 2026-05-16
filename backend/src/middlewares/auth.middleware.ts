@@ -18,8 +18,10 @@ export const authenticate = (req: any, res: any, next: any) => {
   }
 };
 
-export const authorize = (...roles:string[]) =>{
-    return (req:any,res:any, next:any) =>{
+type Role = "guest" | "customer" | "owner" | "staff";
+
+export const authorize = (...roles:Role[]) =>{
+    return (req:{user: {role: Role}},res:any, next:any) =>{
         if(!roles.includes(req.user.role)){
             return res.status(403).json({ message: 'Forbidden'})
         }
