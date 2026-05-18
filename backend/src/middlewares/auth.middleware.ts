@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const authenticate = (req: any, res: any, next: any) => {
-  const token = req.header("Authorization");
+  const token = req.headers["authorization"]?.split(" ")[1] ;
   if (!token) {
     return res
       .status(401)

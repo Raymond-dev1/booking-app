@@ -6,11 +6,12 @@ import {
 export const CreateBusinessController = async (req: any, res: any) => {
   try {
     const id = req.user.id;
+    // const role = req.user.role
     const { name, business_hours, logo } = req.body;
 
     const newBusiness = await createBusiness(
       { name, business_hours, logo },
-      id,
+      id
     );
     if (!newBusiness.success) {
       return res.status(newBusiness.status).json(newBusiness);

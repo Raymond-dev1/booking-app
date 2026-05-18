@@ -24,7 +24,7 @@ const generateSlug = (name: string) => {
 
 export const createBusiness = async (
   { name, business_hours, logo }: BusinessInput,
-  id: number,
+  id: number
 ) => {
   try {
     const existingBusiness = await db
@@ -67,7 +67,7 @@ export const createBusiness = async (
       status: 201,
       success: true,
       message: "Business created successfully",
-      data: newBusiness,
+      data: newBusiness[0],
     };
   } catch (error) {
     console.error("error in creating business", error);
@@ -80,7 +80,7 @@ export const getBusinessById = async (id: number) => {
     const business = await db
       .select()
       .from(businesses)
-      .where(eq(businesses.id, id));
+      .where(eq(businesses.owner_id, id));
     if (business.length < 0) {
       return { status: 404, success: false, message: "Business not found" };
     }
@@ -88,6 +88,7 @@ export const getBusinessById = async (id: number) => {
       status: 200,
       success: true,
       message: "Business retrieved successfully",
+      data:business[0] 
     };
   } catch (error) {
     console.error("Error retrieving business;", error);

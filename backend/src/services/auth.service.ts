@@ -73,7 +73,7 @@ export const loginUser = async ({email, password}: LoginUserInput) =>{
         const token  =accessToken(existingUser[0]!.id, role )
         return {status:200, success: true, token, message: "login successful", data: userData}
     }catch(error){
-        console.error("Error loggin in user:", error)
+        console.error("Error logging in user:", error)
         return{status:500,success:false, message: "internal server error"}
     }
 }

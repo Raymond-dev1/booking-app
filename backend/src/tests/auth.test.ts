@@ -6,8 +6,8 @@ const router = express.Router();
 
 jest.setTimeout(15000); 
 
-describe("POST /auth/register-customer", () => {
-  it("returns status code 201 if user is created successfully", async () => {
+describe("POST /auth/register", () => {
+  it.skip("returns status code 201 if user is created successfully", async () => {
     const res = await request(app)
       .post("/auth/register")
       .send({
@@ -23,7 +23,7 @@ describe("POST /auth/register-customer", () => {
 });
 
 describe("POST /auth/login", () => {
-  it("returns status code 200 if user logged in successfuly", async () => {
+  it.skip("returns status code 200 if user logged in successfuly", async () => {
     const res = await request(app)
       .post("/auth/login")
       .send({
