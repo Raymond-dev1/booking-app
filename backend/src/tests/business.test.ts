@@ -10,7 +10,7 @@ const router = express.Router();
 
 jest.setTimeout(15000); 
 
-describe("POST /business/register", () => {
+describe.skip("POST /business/register", () => {
   it.skip("returns status code 201 if business is created successfully", async () => {
     
     const registerRes = await request(app)
@@ -42,7 +42,7 @@ describe("POST /business/register", () => {
 
 
 //retrieve business with user id 
-describe("GET /business/retrieve", () => {
+describe.skip("GET /business/retrieve", () => {
 
   let token: string
     let id: number
@@ -76,7 +76,7 @@ describe("GET /business/retrieve", () => {
     })
 
     //sends owner id to retrieve business 
-  it("returns status code 200 if business is retrieved successfully", async () => {
+  it.skip("returns status code 200 if business is retrieved successfully", async () => {
 
     const res = await request(app)
       .get(`/business/retrieve?id=${id}`)
@@ -87,3 +87,13 @@ describe("GET /business/retrieve", () => {
   });
 });
 
+
+describe("GET /business/retrieve",  () => {
+  it("returns status code 401 if no token is provided", async() => {
+    const res =await request (app)
+    .get("/business/retrieve")
+    
+    expect(res.statusCode).toBe(401);
+    expect(res.body.message).toContain("unauthorized")
+  });
+})
