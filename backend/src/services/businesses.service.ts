@@ -99,7 +99,36 @@ export const getBusinessById = async (id: number ) => {
 };
 
 
-export const 
+export const deleteBusinessById= async(id: number) => {
+  try{
+    const business= await db.select().from(businesses).where(eq(businesses.id, id))
+    if(business.length === 0){
+      return {status:404, success:false, message: "Business not found"}
+    }
+  }catch(error){
+    console.error("Error deleting business, ", error);
+    return { status: 500, success: false, message: "internal server error" };
+  }
+}
+
+
+export const deleteAllBusiness = async() => {
+  try{
+    const business= await db.select().from(businesses)
+    if(business.length === 0){
+      return {status:404, success:false, message: "Business not found"}
+    }
+      return {
+      status: 200,
+      success: true,
+      message: "Business deleted successfully",
+      data:business[0] 
+    };
+  }catch(error){
+    console.error("Error deleting business, ", error);
+    return { status: 500, success: false, message: "internal server error" };
+  }
+}
 
 //logo --external cloud services
 //slug --background job

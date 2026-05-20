@@ -87,13 +87,40 @@ describe.skip("GET /business/retrieve", () => {
   });
 });
 
-
-describe("GET /business/retrieve",  () => {
+//Tests business fetch 
+describe.skip("GET /business/retrieve",  () => {
   it("returns status code 401 if no token is provided", async() => {
     const res =await request (app)
     .get("/business/retrieve")
     
     expect(res.statusCode).toBe(401);
     expect(res.body.message).toContain("unauthorized")
+  });
+})
+
+//Deletes business test data 
+describe.skip("DELETE /business/delete-all",  () => {
+  let token : string
+
+      beforeAll(async () => {
+      const registerRes = await request(app)
+      .post("/auth/register")
+      .send({ 
+        first_name: "John",
+        last_name: "Doe",
+        email: `owner_${Date.now()}@test.com`, 
+        password: "password123",
+        role: "owner" 
+      })
+
+       token = registerRes.body.token
+})
+  it("returns status code 200 if business is deleted successfully", async() => {
+    const res =await request (app)
+    .delete("/business/delete-all")
+    .set("Authorization", `Bearer ${token}`)
+    
+    expect(res.statusCode).toBe(200);
+    expect(res.body.message).toContain("Business deleted successfully")
   });
 })
