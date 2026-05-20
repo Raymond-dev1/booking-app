@@ -75,13 +75,15 @@ export const createBusiness = async (
   }
 };
 
-export const getBusinessById = async (id: number) => {
+export const getBusinessById = async (id: number ) => {
   try {
+    console.log("looking for business with owner_id:", id)
     const business = await db
       .select()
       .from(businesses)
       .where(eq(businesses.owner_id, id));
-    if (business.length < 0) {
+
+    if (business.length === 0) {
       return { status: 404, success: false, message: "Business not found" };
     }
     return {
