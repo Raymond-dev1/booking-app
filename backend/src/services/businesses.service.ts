@@ -60,6 +60,7 @@ export const createBusiness = async (
         business_hours,
         logo,
         owner_id: id,
+        slug
       })
       .returning();
 

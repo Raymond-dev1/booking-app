@@ -40,6 +40,52 @@ describe.skip("POST /business/register", () => {
   })
 })
 
+//retrieves business with slugs
+describe("POST /business/register", () =>{
+  
+  let token:string
+  let id:number
+
+    //register user and business to gen. token 
+    beforeAll(async () => {
+      const registerRes = await request(app)
+      .post("/auth/register")
+      .send({ 
+        first_name: "John",
+        last_name: "Doe",
+        email: `owner_${Date.now()}@test.com`, 
+        password: "password123",
+        role: "owner" 
+      })
+
+      token = registerRes.body.token
+      console.log("test-user id;", registerRes.body.data.id)
+       
+       const businessRes= await request(app)
+       .post("/business/register")
+       .set("Authorization", `Bearer ${token}`)
+       .send({
+        name: "kos",
+        business_hours: { mon: { open: "09:00", close: "17:00" } },
+        logo: "koenvrenernfdoe44examplejnfvom",
+      })
+
+      id = businessRes.body.data.owner_id
+      console.log('businessId;', id)
+    })
+
+    //retrieves slug of  business 
+  it("returns slug for business successfully", async () => {
+
+    const res = await request(app)
+      .get(`/business/retrieve?id=${id}`)
+      .set("Authorization", `Bearer ${token}`)
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.data.slug).toBeDefined()
+  });
+});
+
 
 //retrieve business with user id 
 describe.skip("GET /business/retrieve", () => {
