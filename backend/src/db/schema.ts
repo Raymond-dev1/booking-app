@@ -27,13 +27,12 @@ function generateUniqueString(length: number = 12): string {
 }
 
 export const users = pgTable('users', {
-     id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
+    id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
     first_name: t.varchar("first_name", { length: 256 }),
     last_name: t.varchar("last_name", { length: 256 }),
     email: t.varchar().notNull(),
     phone_number: t.varchar("phone_number", {length:15}),
     invite_token:t.varchar("invite_token", {length:256}),
-    invite_expires:t.timestamp("invite_expires"),
     password_hash: t.varchar("password_hash"),
     is_active: t.boolean("is_active").default(true),
     role: rolesEnum().default("guest"),
