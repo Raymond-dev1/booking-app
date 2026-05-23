@@ -7,4 +7,9 @@ export const  accessToken= (id: number, role:string) =>{
     const JWT = process.env.JWT_SECRET!
     
     return jwt.sign({id, role }, JWT, {expiresIn: '1h'})
-}   
+}
+
+export const inviteStaffToken = (email:string) =>{
+    const JWT= process.env.JWT_SECRET!
+    return jwt.sign({email}, JWT, {expiresIn: '24h'})
+}
