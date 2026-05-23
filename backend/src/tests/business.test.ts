@@ -40,11 +40,11 @@ describe.skip("POST /business/register", () => {
   })
 })
 
-//retrieves business with slugs
-describe("POST /business/register", () =>{
+//retrieves business with slug
+describe.skip("GET /business/retrieve", () => {
   
-  let token:string
-  let id:number
+  let token: string
+  let id: number
 
     //register user and business to gen. token 
     beforeAll(async () => {
@@ -69,8 +69,10 @@ describe("POST /business/register", () =>{
         business_hours: { mon: { open: "09:00", close: "17:00" } },
         logo: "koenvrenernfdoe44examplejnfvom",
       })
+      
+      console.log("businessRes;", businessRes.body)
 
-      id = businessRes.body.data.owner_id
+      id = businessRes.body.data?.owner_id
       console.log('businessId;', id)
     })
 
@@ -78,8 +80,42 @@ describe("POST /business/register", () =>{
   it("returns slug for business successfully", async () => {
 
     const res = await request(app)
-      .get(`/business/retrieve?id=${id}`)
+      .get("/business/retrieve")
       .set("Authorization", `Bearer ${token}`)
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.data.slug).toBeDefined()
+  });
+});
+
+
+//retrieves business slug by name 
+describe("GET /business/byname", () => {
+  
+  let token: string
+
+    //register user and business to gen. token 
+    beforeAll(async () => {
+      const registerRes = await request(app)
+      .post("/auth/register")
+      .send({ 
+        first_name: "John",
+        last_name: "Doe",
+        email: `owner_${Date.now()}@test.com`, 
+        password: "password123",
+        role: "owner" 
+      })
+
+      token = registerRes.body.token
+      console.log("test-user id;", registerRes.body.data.id)
+    })
+    //retrieves slug of  business 
+  it("returns slug for business successfully", async () => {
+
+    const res = await request(app)
+      .get("/business/byname")
+      .set("Authorization", `Bearer ${token}`)
+      .send({name: "kos"})
 
     expect(res.statusCode).toEqual(200);
     expect(res.body.data.slug).toBeDefined()
@@ -132,6 +168,7 @@ describe.skip("GET /business/retrieve", () => {
     expect(res.body.data.name).toEqual("kos")
   });
 });
+
 
 //Tests business fetch 
 describe.skip("GET /business/retrieve",  () => {
