@@ -99,6 +99,28 @@ export const getBusinessById = async (id: number ) => {
   }
 };
 
+export const getBusinessByName= async (name: string ) => {
+  try {
+    console.log("looking for business with name:", name)
+    const business = await db
+      .select()
+      .from(businesses)
+      .where(eq(businesses.name, name));
+
+    if (business.length === 0) {
+      return { status: 404, success: false, message: "Business not found" };
+    }
+    return {
+      status: 200,
+      success: true,
+      message: "Business retrieved successfully",
+      data:business[0] 
+    };
+  } catch (error) {
+    console.error("Error retrieving business;", error);
+    return { status: 500, success: false, message: "internal server error" };
+  }
+};
 
 export const deleteBusinessById= async(id: number) => {
   try{
