@@ -3,6 +3,7 @@ import { db } from "../db/index.js";
 import {eq} from "drizzle-orm"
 import { users , services, staff_availability, staff_services} from "../db/schema.js";
 import bcrypt from "bcrypt"
+import {sendInviteEmail} from "../services/mail.service.js"
 
 type CreateStaffInput = {
     first_name: string,
@@ -28,8 +29,9 @@ export const inviteStaff = async({email, first_name, last_name, phone_number}: C
             phone_number,
             role: role
         }).returning()
-        // const link = `http://localhost:3000/auth/verify?token=${inviteToken}`
-        //sends invite mail 
+        const link = `http://localhost:3000/auth/verify?token=${inviteToken}`
+         //sends invite mail 
+        await sendInviteEmail(first_name, link)
         return{status:200, sucess:true,message: "staff invited successfully", inviteToken, data:pendingStaff[0]}
     }catch(error){
         console.error("Error inviting staff", error)
