@@ -1,4 +1,4 @@
-import {inviteStaff, acceptInvite} from "../services/staff.service.js"
+import {inviteStaff, acceptInvite, deleteAllStaff} from "../services/staff.service.js"
 
 export const InviteStaffController =async (req:any, res:any) =>{
     try{
@@ -33,3 +33,16 @@ export const AcceptInviteController = async(req:any, res:any) =>{
   }
 }
 
+export const DeleteAllStaffController = async(req:any, res:any) =>{
+    try{
+        const staff = await deleteAllStaff()
+         if(!staff.success){
+            return res.status(staff.status).json(staff)
+        }
+        return res.status(staff.status).json(staff)
+    }catch (error) {
+    return res
+      .status(500)
+      .json({ status: 500, success: false, message: "internal server error" });
+  }
+}

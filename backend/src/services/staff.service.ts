@@ -31,8 +31,8 @@ export const inviteStaff = async({email, first_name, last_name, phone_number}: C
         }).returning()
         const link = `http://localhost:5000/staff/accept?token=${inviteToken}`
          //sends invite mail 
-        await sendInviteEmail(first_name, link)
-        return{status:200, sucess:true,message: "staff invited successfully", inviteToken, data:pendingStaff[0]}
+        await sendInviteEmail(email, first_name, link)
+        return{status:200, success:true,message: "staff invited successfully", inviteToken, data:pendingStaff[0]}
     }catch(error){
         console.error("Error inviting staff", error)
         return {status:500, success:false, message: "internal server error"}
@@ -60,5 +60,19 @@ export const acceptInvite =async (password: string, inviteToken: string)  =>{
     }catch(error){
          console.error("Error inviting staff", error)
         return {status:500, success:false, message: "internal server error"}
+    }
+}
+
+
+export const deleteAllStaff = async()=>{
+    try{
+        const staff = await db.select().from(users).where(eq(users.role, "staff"))
+        if(!staff.length){
+            return{status:404, success:false, message: "No staff found"}
+        }
+        await db.delete(users).where(eq(users.role, "staff"));
+        return {status:200, success:true, message: "All staff deleted successfully"}
+    }catch(error){
+        return{status:500, success:false, message: "internal server error"}
     }
 }
