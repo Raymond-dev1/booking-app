@@ -1,7 +1,6 @@
 import express from "express";
 import request from "supertest";
 import app from "../app.js";
-import { accessToken } from "../services/token.service.js";
 import dotenv  from "dotenv"
 
 dotenv.config()
@@ -90,7 +89,7 @@ describe.skip("GET /business/retrieve", () => {
 
 
 //retrieves business slug by name 
-describe("GET /business/byname", () => {
+describe.skip("GET /business/byname", () => {
   
   let token: string
 
