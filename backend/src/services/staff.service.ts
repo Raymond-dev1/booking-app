@@ -29,7 +29,7 @@ export const inviteStaff = async({email, first_name, last_name, phone_number}: C
             phone_number,
             role: role
         }).returning()
-        const link = `http://localhost:3000/auth/verify?token=${inviteToken}`
+        const link = `http://localhost:5000/staff/accept?token=${inviteToken}`
          //sends invite mail 
         await sendInviteEmail(first_name, link)
         return{status:200, sucess:true,message: "staff invited successfully", inviteToken, data:pendingStaff[0]}
@@ -49,7 +49,8 @@ export const acceptInvite =async (password: string, inviteToken: string)  =>{
         const hashed = await bcrypt.hash(password,10)
         const updatedStaff = await db.update(users).set({
             password_hash: hashed,
-            is_active: true
+            is_active: true,
+            invite_token: null
         }).where(eq(users.invite_token, inviteToken)).returning()
 
         //sends welcome mail
