@@ -9,10 +9,9 @@ dotenv.config()
 
 jest.setTimeout(15000); 
 
-
-beforeAll(async () => {
-    
-    let token: string;
+describe("POST /staff/invite", () => {
+  let token: string;
+  beforeAll(async () => {
 
       const registerRes = await request(app)
       .post("/auth/register")
@@ -24,9 +23,7 @@ beforeAll(async () => {
         role: "owner" 
       })
       token = registerRes.body.token
-
-
-describe("POST /staff/invite", () => {
+})
     it("sends invite mail when staff is invited successfully", async () => {
         const staffInviteRes = await request(app)
         .post("/staff/invite")
@@ -39,27 +36,13 @@ describe("POST /staff/invite", () => {
         })
         expect(staffInviteRes.statusCode).toEqual(200)
         expect(staffInviteRes.body.message).toEqual("staff invited successfully")
-        expect(staffInviteRes.body.token).toBeDefined()
+        expect(staffInviteRes.body.inviteToken ).toBeDefined()
         expect(staffInviteRes.body.data.email).toEqual("iziogabraymond@gmail.com")
     })
-})
-})
 
-// describe("", () => {
-//     it("returns status code 200 when staff is invited successfully", async () => {
-//       async function 
-//         // const staffInviteRes = await request(app)
-//         // .post("/staff/invite")
-//         // .set("Authorization", `Bearer ${token}`)
-//         // .send({
-//         //   email: "iziogabraymond@gmail.com",
-//         //   first_name: "Ray",
-//         //   last_name: "effect",
-//         //   phone_number: "09119807654",
-//         // })
-//         // expect(staffInviteRes.statusCode).toEqual(200)
-//         // expect(staffInviteRes.body.message).toEqual("staff invited successfully")
-//         // expect(staffInviteRes.body.token).toBeDefined()
-//         // expect(staffInviteRes.body.data.email).toEqual("iziogabraymond@gmail.com")
-//     })
-// })
+      afterAll(async () => {
+        await request(app)
+      .delete("/staff/delete")
+      .set("Authorization", `Bearer ${token}`)
+})
+})
