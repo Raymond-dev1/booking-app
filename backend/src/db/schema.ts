@@ -13,18 +13,6 @@ export const paymentTypeEnum = pgEnum("payment_type", ["pay_now", "pay_on_arriva
 //     column name in ts : database type ( db column name )
 // })
 
-function generateUniqueString(length: number = 12): string {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let uniqueString = "";
-
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    uniqueString += characters[randomIndex];
-  }
-
-  return uniqueString;
-}
 
 export const users = pgTable('users', {
     id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
