@@ -1,18 +1,23 @@
 import {Resend} from "resend";
 import "dotenv/config";
+import {generateUniqueString} from "../utils/uuid.js"
 
 const resend = new Resend (process.env.RESEND_API_KEY);
 
-const from = process.env.SENDER!
+const sEmail = process.env.SENDER!
 
 export const sendInviteEmail =async(email:string, first_name: string , inviteLink: string, ) =>{ 
     const {data, error} =await resend.emails.send({
-  from,
-  to:  email , // ["delivered@resend.dev"],
+  from: sEmail,
+  to:  `delivered+invite@resend.dev`,
   subject: "You've been invited to join BookMe",
   html: `<h1>Hi, ${first_name}!</h1><p>Click <a href="${inviteLink}">here</a> to set up your account. Link expires in 24hours.</p>`,
   text: `You're invited to join BookMe as a staff member! Visit the link to set up your account: ${inviteLink}`,
-});
+},
+{
+  idempotencyKey: generateUniqueString(20)
+}
+);
 
 if (error) {
   console.error(`Error sending email to ${email}:`, error)
