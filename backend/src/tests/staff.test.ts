@@ -9,8 +9,10 @@ dotenv.config()
 
 jest.setTimeout(15000); 
 
-describe("POST /staff/invite", () => {
+describe("staff invitation flow", () => {
   let token: string;
+  let inviteToken: string;
+  
   beforeAll(async () => {
 
       const registerRes = await request(app)
@@ -34,11 +36,26 @@ describe("POST /staff/invite", () => {
           last_name: "effect",
           phone_number: "09119807654",
         })
+
         expect(staffInviteRes.statusCode).toEqual(200)
         expect(staffInviteRes.body.message).toEqual("staff invited successfully")
-        expect(staffInviteRes.body.inviteToken ).toBeDefined()
+        expect(staffInviteRes.body.inviteToken).toBeDefined()
         expect(staffInviteRes.body.data.email).toEqual("iziogabraymond@gmail.com")
+
+        inviteToken = staffInviteRes.body.inviteToken
     })
+
+    it("activates staff account when valid token and password provided", async () => {
+  const res = await request(app)
+    .post("/staff/accept")
+    .query({ token: inviteToken}) 
+    .send({ password: "newpassword123" })
+
+  expect(res.statusCode).toEqual(200)
+  expect(res.body.token).toBeDefined()
+  expect(res.body.message).toContain("successfully")
+  expect(res.body.data.first_name).toEqual("Ray")
+})
 
       afterAll(async () => {
         await request(app)
