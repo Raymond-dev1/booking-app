@@ -18,6 +18,22 @@ export const authenticate = (req: any, res: any, next: any) => {
   }
 };
 
+export const authenticateInviteLink = (req:any, res:any, next:any) =>{
+  const token = req.query.token
+  if(!token){
+    return res
+      .status(401)
+      .json({ message: "Access denied, unauthorized " });
+  }
+  try{
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {email:string}
+    req.inviteEmail = decoded.email;
+    next()
+  }catch(error){
+     return res.status(400).json({ message: "Invalid token." });
+  }
+}
+
 type Role = "guest" | "customer" | "owner" | "staff";
 
 export const authorize = (...roles:Role[]) =>{
@@ -28,3 +44,4 @@ export const authorize = (...roles:Role[]) =>{
         next()
     }
 }
+

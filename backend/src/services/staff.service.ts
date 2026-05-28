@@ -19,7 +19,7 @@ export const inviteStaff = async({email, first_name, last_name, phone_number}: C
         if(existingStaff.length >0){
             return {status:409,success:false, message: "staff already exists"}
         }
-         const inviteToken = inviteStaffToken(email)
+         const inviteToken = inviteStaffToken(email, role)
         const pendingStaff = await db.insert(users).values({
             first_name,
             last_name,
@@ -29,7 +29,7 @@ export const inviteStaff = async({email, first_name, last_name, phone_number}: C
             phone_number,
             role: role
         }).returning()
-        const link = `http://localhost:5000/staff/accept?token=${inviteToken}`
+         const link = `http://localhost:5000/staff/accept?token=${inviteToken}`
          //sends invite mail 
         await sendInviteEmail(email, first_name, link)
         return{status:200, success:true,message: "staff invited successfully", inviteToken, data:pendingStaff[0]}
@@ -40,18 +40,19 @@ export const inviteStaff = async({email, first_name, last_name, phone_number}: C
 }
 
 //ACCEPTS TOKEN AND SETS NEW STAFF PASSWORD
-export const acceptInvite =async (password: string, inviteToken: string)  =>{
+export const acceptInvite =async (password: string, email: string)  =>{
     try{
-        const pendingStaff = await db.select().from(users).where(eq(users.invite_token, inviteToken))
+        const pendingStaff = await db.select().from(users).where(eq(users.email, email))
         if(!pendingStaff){
             return {status:400, success:false, message: "invalid or expired token"}
         }
+        
         const hashed = await bcrypt.hash(password,10)
         const updatedStaff = await db.update(users).set({
             password_hash: hashed,
             is_active: true,
             invite_token: null
-        }).where(eq(users.invite_token, inviteToken)).returning()
+        }).where(eq(users.email, email)).returning()
 
         //sends welcome mail
         const token = accessToken(updatedStaff[0]!.id, updatedStaff[0]!.role! ?? "staff")

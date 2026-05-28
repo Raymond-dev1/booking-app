@@ -20,8 +20,9 @@ export const InviteStaffController =async (req:any, res:any) =>{
 export const AcceptInviteController = async(req:any, res:any) =>{
     try{
         const {password} =req.body
-        const {token} = req.query;
-        const result = await acceptInvite(password , token )
+        const email  = req.inviteEmail
+
+        const result = await acceptInvite(password , email )
          if(!result.success){
             return res.status(result.status).json(result)
         }
