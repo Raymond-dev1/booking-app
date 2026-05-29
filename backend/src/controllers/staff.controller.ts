@@ -1,4 +1,4 @@
-import {inviteStaff, acceptInvite, deleteAllStaff} from "../services/staff.service.js"
+import {inviteStaff, acceptInvite, deleteAllStaff, deactivateStaff} from "../services/staff.service.js"
 
 export const InviteStaffController =async (req:any, res:any) =>{
     try{
@@ -24,6 +24,21 @@ export const AcceptInviteController = async(req:any, res:any) =>{
 
         const result = await acceptInvite(password , email )
          if(!result.success){
+            return res.status(result.status).json(result)
+        }
+        return res.status(result.status).json(result)
+    }catch (error) {
+    return res
+      .status(500)
+      .json({ status: 500, success: false, message: "internal server error" });
+  }
+}
+
+export const DeactivateStaffController =async(req:any, res:any)=>{
+    try{
+        const id = req.params.id
+        const result = await deactivateStaff(id)
+        if(!result.success){
             return res.status(result.status).json(result)
         }
         return res.status(result.status).json(result)

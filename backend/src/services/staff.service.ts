@@ -46,7 +46,7 @@ export const acceptInvite =async (password: string, email: string)  =>{
         if(!pendingStaff){
             return {status:400, success:false, message: "invalid or expired token"}
         }
-        
+
         const hashed = await bcrypt.hash(password,10)
         const updatedStaff = await db.update(users).set({
             password_hash: hashed,
@@ -61,6 +61,21 @@ export const acceptInvite =async (password: string, email: string)  =>{
     }catch(error){
          console.error("Error inviting staff", error)
         return {status:500, success:false, message: "internal server error"}
+    }
+}
+
+
+export const deactivateStaff = async(staffId:number ) =>{
+    try{
+        const staff = await db.select().from(users).where(eq(users.id,staffId))
+        if(!staff.length){
+            return {status:404, success: false, message: "Staff not found"}
+        }
+        await db.update(users).set({is_active: false}).where(eq(users.id, staffId))
+        return {status:200, success: true, message: "Staff deactivated successfully"}
+    }catch(error){
+        console.error("Error deactivating staff", error)
+        return {status:500, success: false, message: "Internal server error"}
     }
 }
 
