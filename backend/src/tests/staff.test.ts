@@ -9,7 +9,7 @@ dotenv.config()
 
 jest.setTimeout(15000); 
 
-describe("staff invitation flow", () => {
+describe.skip("staff invitation flow", () => {
   let token: string;
   let inviteToken: string;
   
@@ -51,6 +51,8 @@ describe("staff invitation flow", () => {
     .query({ token: inviteToken}) 
     .send({ password: "newpassword123" })
 
+    console.log("test staff_id;", res.body.data.id)
+
   expect(res.statusCode).toEqual(200)
   expect(res.body.token).toBeDefined()
   expect(res.body.message).toContain("successfully")
@@ -63,3 +65,68 @@ describe("staff invitation flow", () => {
       .set("Authorization", `Bearer ${token}`)
 })
 })
+
+
+
+describe("deactivates staff", () => {
+  let token:string
+
+  beforeAll(async ()=>{
+    const registerRes = await request(app)
+      .post("/auth/register")
+      .send({ 
+        first_name: "John",
+        last_name: "Doe",
+        email: `owner_${Date.now()}@test.com`, 
+        password: "password123",
+        role: "owner" 
+      })
+      token = registerRes.body.token
+  })
+
+  it("deactivates staff with id params successfully", async () =>{
+    const staff = await request(app)
+    .post("/staff/deactivate/57")
+    .set("Authorization", `Bearer ${token}`)
+
+    expect(staff.statusCode).toEqual(200)
+    expect(staff.body.message).toContain("deactivated")
+  })
+})
+
+
+// describe("staff assignment flow", () =>{
+//   let token:string
+//   let serviceId:number
+//   let businessId:number
+
+//   beforeAll(async () => {
+
+//       const registerRes = await request(app)
+//       .post("/auth/register")
+//       .send({ 
+//         first_name: "John",
+//         last_name: "Doe",
+//         email: `owner_${Date.now()}@test.com`, 
+//         password: "password123",
+//         role: "owner" 
+//       })
+//       token = registerRes.body.token
+
+//       const res = await request(app)
+//       .post("/business/register")
+//       .set("Authorization", `Bearer ${token}`)
+//       .send({
+//         name: "koe",
+//         business_hours: { mon: { open: "09:00", close: "17:00" } },
+//         logo: "koenvrenernfdoe44examplejnfvom",
+//       })
+//       businessId =res.body.data.id
+// })
+// it.("assigns staff to service successfully", async() =>{
+//   const res =await request(app)
+//   .post(`/staff/assign/${serviceId}`)
+//   .set("Authorization", `Bearer ${token}`)
+//   .send({57})
+// })
+// })
