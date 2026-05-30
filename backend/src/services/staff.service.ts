@@ -1,6 +1,6 @@
 import {accessToken, inviteStaffToken} from "./token.service.js";
 import { db } from "../db/index.js";
-import {eq} from "drizzle-orm"
+import {eq, and} from "drizzle-orm"
 import { users , services, staff_availability, staff_services} from "../db/schema.js";
 import bcrypt from "bcrypt"
 import {sendInviteEmail} from "../services/mail.service.js"
@@ -64,7 +64,6 @@ export const acceptInvite =async (password: string, email: string)  =>{
     }
 }
 
-
 export const deactivateStaff = async(staffId:number ) =>{
     try{
         const staff = await db.select().from(users).where(eq(users.id,staffId))
@@ -79,6 +78,43 @@ export const deactivateStaff = async(staffId:number ) =>{
     }
 }
 
+
+export const assignStaff = async (staffId:number, serviceId:number, businessId:number) =>{
+    try{
+        const existingStaff = await db.select().from(users).where(and(eq(users.id, staffId), eq(users.role, "staff")))
+        if(!existingStaff.length){
+            return {status:404, success:false, message: "staff may have been deactivated"}
+        }
+        const service = await db.select().from(services).where(and(eq(services.id, serviceId), eq(services.business_id, businessId)))
+        if(!service.length){
+            return {status:404, success:false, message:"service not found"}
+        }
+        const staffServices = await db.insert(staff_services).values({
+            staff_id: staffId,
+            service_id: serviceId
+        }).returning()
+        return {status:200, success:true, message: "Staff assigned to service successfully", data:staffServices[0]}
+    }catch(error){
+        console.error("Error assigning staff to service", error)
+        return {status:500,success: false, message: "Internal server error"}
+    }
+}
+
+export const getStaffByService = async(serviceId:number ) =>{
+    try{
+        const staff =  await db.select({
+            id:users.id,
+            first_name: users.first_name,
+            last_name: users.last_name
+        }).from(staff_services).innerJoin(users, eq(staff_services.staff_id, users.id))
+        .where(eq(staff_services.service_id, serviceId))
+
+        return {status:200, success:true, message: "Staff retrieved successfully", data:staff}
+    }catch(error){
+        console.error("Error retrieving staff by service", error)
+        return {status:500, success:false, message: "Internal server error"}
+    }
+}
 
 export const deleteAllStaff = async()=>{
     try{

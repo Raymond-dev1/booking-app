@@ -1,4 +1,4 @@
-import {inviteStaff, acceptInvite, deleteAllStaff, deactivateStaff} from "../services/staff.service.js"
+import {inviteStaff, acceptInvite, deleteAllStaff, deactivateStaff, assignStaff, getStaffByService} from "../services/staff.service.js"
 
 export const InviteStaffController =async (req:any, res:any) =>{
     try{
@@ -32,6 +32,39 @@ export const AcceptInviteController = async(req:any, res:any) =>{
       .status(500)
       .json({ status: 500, success: false, message: "internal server error" });
   }
+}
+
+export const AssignStaffController = async(req:any, res:any) => {
+    try{
+        const businessId =req.user.id
+        const serviceId =req.params.serviceId
+        const {staffId }= req.body
+
+        const result  = await assignStaff(staffId, serviceId, businessId)
+        if(!result.success){
+            return res.status(result.status).json(result)
+        }
+        return res.status(result.status).json(result)
+    }catch(error){
+         return res
+      .status(500)
+      .json({ status: 500, success: false, message: "internal server error" });
+}
+}
+
+export const GetStaffByServiceController = async(req:any, res:any) =>{
+    try{
+        const serviceId = req.params.serviceId
+        const staff = await getStaffByService(serviceId)
+        if(!staff.success){
+            return res.status(staff.status).json(staff)
+        }
+        return res.status(staff.status).json(staff)
+    }catch(error){
+         return res
+      .status(500)
+      .json({ status: 500, success: false, message: "internal server error" });
+    }
 }
 
 export const DeactivateStaffController =async(req:any, res:any)=>{
