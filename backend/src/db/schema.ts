@@ -48,6 +48,7 @@ export const services = pgTable("services", {
     name: t.varchar("name", { length: 256}).notNull(),
     description: t.text("description"),
     duration_minutes: t.integer("duration_minutes"),
+    buffer_mins: t.integer("buffer_mins").default(0),
     price: t.numeric("price", {precision: 10, scale: 2}),
     payment_type:paymentTypeEnum("payment_type").default("pay_now"),
     is_active: t.boolean("is_active").default(true),
