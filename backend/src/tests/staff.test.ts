@@ -66,8 +66,6 @@ describe.skip("staff invitation flow", () => {
 })
 })
 
-
-
 describe("deactivates staff", () => {
   let token:string
 
@@ -95,7 +93,7 @@ describe("deactivates staff", () => {
 })
 
 
-// describe("staff assignment flow", () =>{
+// describe("staff to service assignment", () =>{
 //   let token:string
 //   let serviceId:number
 //   let businessId:number
