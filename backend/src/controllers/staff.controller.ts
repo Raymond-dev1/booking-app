@@ -36,9 +36,8 @@ export const AcceptInviteController = async(req:any, res:any) =>{
 
 export const AssignStaffController = async(req:any, res:any) => {
     try{
-        const businessId =req.user.id
         const serviceId =req.params.serviceId
-        const {staffId }= req.body
+        const {staffId, businessId }= req.body
 
         const result  = await assignStaff(staffId, serviceId, businessId)
         if(!result.success){
