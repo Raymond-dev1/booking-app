@@ -141,11 +141,11 @@ export const deleteAllBusiness = async() => {
     if(business.length === 0){
       return {status:404, success:false, message: "Business not found"}
     }
+    await db.delete(businesses)
       return {
       status: 200,
       success: true,
       message: "Business deleted successfully",
-      data:business[0] 
     };
   }catch(error){
     console.error("Error deleting business, ", error);
