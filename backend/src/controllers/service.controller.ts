@@ -2,10 +2,10 @@ import {createService, deleteAllService, deleteService} from "../services/servic
 
 export const CreateServiceController = async (req:any, res:any) => {
     try{
+        const userId =req.user.id
+        const {name, duration_minutes, buffer_mins, price, description, payment_type} = req.body
 
-        const {name, duration_minutes, buffer_mins, price, description, payment_type,business_id} = req.body
-
-        const newService = await createService({business_id, name, duration_minutes, buffer_mins, price, description}, payment_type)
+        const newService = await createService({name, duration_minutes, buffer_mins, price, description}, userId, payment_type)
         if(!newService.success){
             return res.status(newService.status).json(newService)
         }

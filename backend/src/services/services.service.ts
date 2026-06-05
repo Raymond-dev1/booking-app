@@ -1,9 +1,9 @@
 import {eq} from "drizzle-orm";
 import { db } from "../db/index.js";
-import { users ,services, } from "../db/schema.js";
+import { users ,services, businesses} from "../db/schema.js";
 
 type CreateServiceInput = {
-    business_id:number,
+    // business_id:number,
     name:string,
     duration_minutes:number,
     buffer_mins: number,
@@ -13,14 +13,19 @@ type CreateServiceInput = {
 
 type PaymentType ="pay_now" | "pay_on_arrival" | "free"
 
-export const createService =async({business_id, name , duration_minutes, buffer_mins, price, description}: CreateServiceInput, payment_type:PaymentType) =>{
+export const createService =async({name , duration_minutes, buffer_mins, price, description}: CreateServiceInput, userId:number, payment_type:PaymentType) =>{
     try{
+        const business =await db.select().from(businesses).where(eq(businesses.owner_id, userId))
+        const businessId = business[0]?.id
+        if(!businessId){
+            return{status:404, success:false, message: "business not found"}
+        }
         const existingService = await db.select().from(services).where(eq(services.name, name))
         if(existingService.length > 0){
             return {status:409 , success:false, message: "service already exists"}
         }
         const newService = await db.insert(services).values({
-            business_id,
+            business_id: businessId,
             name,
             duration_minutes,
             buffer_mins,
