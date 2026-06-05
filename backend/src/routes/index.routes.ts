@@ -12,6 +12,6 @@ const router: Router = Router()
 router.use("/auth", authRoutes)
 router.use("/business", businessroutes)
 router.use("/staff", staffRoutes)
-router.use("service", serviceRoutes)
+router.use("/service", serviceRoutes)
 
 export default router
