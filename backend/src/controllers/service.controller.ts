@@ -1,9 +1,9 @@
-import {createService, deleteService} from "../services/services.service.js"; 
+import {createService, deleteAllService, deleteService} from "../services/services.service.js"; 
 
 export const CreateServiceController = async (req:any, res:any) => {
     try{
-        const business_id =req.user.id
-        const {name, duration_minutes, buffer_mins, price, description, payment_type} = req.body
+
+        const {name, duration_minutes, buffer_mins, price, description, payment_type,business_id} = req.body
 
         const newService = await createService({business_id, name, duration_minutes, buffer_mins, price, description}, payment_type)
         if(!newService.success){
@@ -21,6 +21,19 @@ export const DeleteServiceController = async (req:any, res:any) => {
         const serviceId = req.params.serviceId
         const service = await deleteService(serviceId)
         
+        if(!service.success){
+            return res.status(service.status).json(service)
+        }
+        return res.status(service.status).json(service)
+    }catch(error){
+        console.error("Error in delete service controller", error)
+        return res.status(500).json({status:500,success:false,message: "internal server error"})
+    }
+}
+
+export const DeleteAllServicesController = async (req:any, res:any) => {
+    try{
+        const service = await deleteAllService()
         if(!service.success){
             return res.status(service.status).json(service)
         }
