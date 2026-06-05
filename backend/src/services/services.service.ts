@@ -50,3 +50,17 @@ export const deleteService = async (serviceId: number) =>{
     }
 }
 
+export const deleteAllService = async()=>{
+    try{
+        const service=  await db.select().from(services)
+        if(!service.length){
+            return {status:404, success: false, message: "No service found"}
+        }
+        await db.delete(services)
+        return {status:200, success:true, message: "All service deleted successfully"}
+    }catch(error){
+        console.error("Error deleting all service", error)
+        return {status:500, success:false, message: "internal server error"}
+    }
+}
+
