@@ -18,7 +18,7 @@ export const CreateServiceController = async (req:any, res:any) => {
 
 export const DeleteServiceController = async (req:any, res:any) => {
     try{
-        const serviceId = req.params.serviceId
+        const serviceId =parseInt(req.params.serviceId)
         const service = await deleteService(serviceId)
         
         if(!service.success){
