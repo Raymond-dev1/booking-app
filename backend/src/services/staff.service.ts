@@ -11,7 +11,23 @@ type CreateStaffInput = {
     email: string,
     phone_number :string
 }
+
+type availabilityEngineInput = {
+    staff_id:number,
+    start_time:string,
+    end_time:string,
+
+};
+
+type updateAvailabilityInput= {
+    id:number,
+    staff_id: number,
+    start_time:string,
+    end_time:string
+}
 type role=  "staff"
+type dayOfTheWeekEnum = "sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday";
+
 
 export const inviteStaff = async({email, first_name, last_name, phone_number}: CreateStaffInput,role: role ) =>{
     try{
@@ -115,6 +131,54 @@ export const getStaffByService = async(serviceId:number ) =>{
         return {status:500, success:false, message: "Internal server error"}
     }
 }
+
+export const setStaffAvailability =async ({staff_id, start_time, end_time}:availabilityEngineInput, day_of_the_week: dayOfTheWeekEnum ) =>{
+    try{
+        const existingStaff = await db.select().from(users).where(and(eq(users.id, staff_id), eq(users.role, "staff")))
+        if(!existingStaff.length){
+            return {status:404, success:false ,message: "staff not found"}
+        }
+        if(existingStaff[0]?.is_active === false){
+            return {status:403, success:false, message: "You may have been deactivated , please contact your admin"}
+        }
+        const existingAvailability = await db.select().from(staff_availability).where(and(eq(staff_availability.staff_id, staff_id), eq(staff_availability.day_of_the_week, day_of_the_week)))
+        if(existingAvailability.length >0 ){
+            return {status:409, success: false, message: "Availability already set for this day, please update instead"}
+        }
+        const availability = await db.insert(staff_availability).values({
+            staff_id,
+            start_time,
+            end_time,
+            day_of_the_week
+        }).returning()
+        return{status: 201, success:true, message: "Availabilty created successfully", data:availability[0]}
+    }catch(error){
+        console.error("Error setting availability;", error)
+        return {status:500, success:false, message: "internal server error"}
+    }
+}
+
+export const updateStaffAvailabity = async({start_time, end_time, staff_id, id }: updateAvailabilityInput, day_of_the_week: dayOfTheWeekEnum) => {
+    try{
+        const existingStaff = await db.select().from(users).where(and(eq(users.id, staff_id), eq(users.role, "staff")))
+        if(!existingStaff.length){
+            return{status: 401, success:false , message : "Unauthorized"} 
+        }
+         if(existingStaff[0]?.is_active === false){
+            return {status:403, success:false, message: "You may have been deactivated , please contact your admin"}
+        }
+        const updatedAvailability = await db.update(staff_availability).set({
+            start_time,
+            end_time,
+            day_of_the_week
+        }).where(and(eq(staff_availability.staff_id, staff_id), eq(staff_availability.id, id))).returning()
+        return {status:200, success:true, message: "Availability updated successfully", data:updatedAvailability[0]}
+    }catch(error){
+        console.error("Error updating  staff  availability", error)
+        return {status:500, success:false, message: "Internal server error"}
+    }
+}
+
 
 export const deleteAllStaff = async()=>{
     try{

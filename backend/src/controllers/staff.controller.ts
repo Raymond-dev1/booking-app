@@ -1,4 +1,6 @@
-import {inviteStaff, acceptInvite, deleteAllStaff, deactivateStaff, assignStaff, getStaffByService} from "../services/staff.service.js"
+import { dayOfTheWeekEnum } from "../db/schema.js"
+import {inviteStaff, acceptInvite, deleteAllStaff, deactivateStaff, assignStaff, getStaffByService, updateStaffAvailabity} from "../services/staff.service.js"
+import { setStaffAvailability } from "../services/staff.service.js"
 
 export const InviteStaffController =async (req:any, res:any) =>{
     try{
@@ -79,6 +81,35 @@ export const DeactivateStaffController =async(req:any, res:any)=>{
       .status(500)
       .json({ status: 500, success: false, message: "internal server error" });
   }
+}
+
+export const SetStaffAvailController = async(req:any, res:any)=>{
+    try{
+        const staff_id =req.user.id
+        const{ start_time, end_time, day_of_the_Week } = req.body
+        const result = await setStaffAvailability({start_time, staff_id,end_time}, day_of_the_Week)
+        if(!result.success){
+            return res.status(result.status).json(result)
+        }
+        return res.status(result.status).json(result)
+    }catch(error){
+        console.error("Error in create service controller", error)
+        return res.status(500).json({status:500,success:false,message: "internal server error"})
+    }
+}
+export const updateStaffAvailController = async(req:any, res:any) =>{
+    try{
+        const staff_id =req.user.id
+        const {start_time, end_time, id, day_of_the_week} =req.body
+        const result = await updateStaffAvailabity({start_time, end_time,staff_id, id}, day_of_the_week)
+         if(!result.success){
+            return res.status(result.status).json(result)
+        }
+        return res.status(result.status).json(result)
+    }catch(error){
+        console.error("Error in create service controller", error)
+        return res.status(500).json({status:500,success:false,message: "internal server error"})
+    }
 }
 
 export const DeleteAllStaffController = async(req:any, res:any) =>{
