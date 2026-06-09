@@ -48,11 +48,9 @@ describe("Service  flow",  () => {
         description: "A simple haircut service for men and young adults",
         payment_type: "pay_on_arrival",
       });
-      console.log("service;", serviceRes.body)
       serviceId = serviceRes.body.data.id
-      console.log("serviceId;", serviceId)
 
-    expect(serviceRes.statusCode).toEqual(200);
+    expect(serviceRes.statusCode).toEqual(201);
     expect(serviceRes.body.message).toContain("successfully");
     expect(serviceRes.body.data.name).toEqual("Haircut");
     expect(serviceRes.body.data.price).toEqual("2000.00");
