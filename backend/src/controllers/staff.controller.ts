@@ -86,8 +86,8 @@ export const DeactivateStaffController =async(req:any, res:any)=>{
 export const SetStaffAvailController = async(req:any, res:any)=>{
     try{
         const staff_id =req.user.id
-        const{ start_time, end_time, day_of_the_Week } = req.body
-        const result = await setStaffAvailability({start_time, staff_id,end_time}, day_of_the_Week)
+        const{ start_time, end_time, day_of_the_week } = req.body
+        const result = await setStaffAvailability({start_time, staff_id,end_time}, day_of_the_week)
         if(!result.success){
             return res.status(result.status).json(result)
         }
@@ -100,7 +100,8 @@ export const SetStaffAvailController = async(req:any, res:any)=>{
 export const updateStaffAvailController = async(req:any, res:any) =>{
     try{
         const staff_id =req.user.id
-        const {start_time, end_time, id, day_of_the_week} =req.body
+        const id = req.params.availId
+        const {start_time, end_time, day_of_the_week} =req.body
         const result = await updateStaffAvailabity({start_time, end_time,staff_id, id}, day_of_the_week)
          if(!result.success){
             return res.status(result.status).json(result)
