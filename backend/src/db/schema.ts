@@ -58,15 +58,15 @@ export const services = pgTable("services", {
 ])
 
 export const staff_services = pgTable("staff_services",{
-    staff_id: t.integer("staff_id").notNull().references(() => users.id),
-    service_id: t.integer("service_id").notNull().references(() => services.id),
+    staff_id: t.integer("staff_id").notNull().references(() => users.id, {onDelete: "cascade"} ),
+    service_id: t.integer("service_id").notNull().references(() => services.id, {onDelete: "cascade"} ),
 }, (table) =>[
     t.primaryKey({columns: [table.staff_id, table.service_id]})
 ])
 
 export const staff_availability =pgTable("staff_availability", {
     id: t.integer("id").primaryKey().generatedAlwaysAsIdentity(),
-    staff_id: t.integer("staff_id").references(() => users.id),
+    staff_id: t.integer("staff_id").references(() => users.id, {onDelete: "cascade"} ),
     day_of_the_week: dayOfTheWeekEnum("day_of_the_week").notNull(),
     start_time: t.time("start_time").notNull(),
     end_time: t.time("end_time").notNull()
@@ -74,10 +74,10 @@ export const staff_availability =pgTable("staff_availability", {
 
 export const bookings =pgTable("bookings", {
     id:t.integer("id").primaryKey().generatedAlwaysAsIdentity(),
-    business_id: t.integer("business_id").references(()=> businesses.id),
-    service_id: t.integer("service_id").references(() => services.id),
-    staff_id: t.integer("staff_id").references(() => users.id),
-    customer_id: t.integer("customer_id").references(() => users.id),
+    business_id: t.integer("business_id").references(()=> businesses.id, {onDelete: "cascade"} ),
+    service_id: t.integer("service_id").references(() => services.id, {onDelete: "restrict"} ),
+    staff_id: t.integer("staff_id").references(() => users.id, {onDelete: "set null"} ),
+    customer_id: t.integer("customer_id").references(() => users.id, {onDelete: "set null"} ),
     guest_email:t.varchar("guest_email", {length:256}),
     guest_phone:t.varchar("guest_phone", {length:20}).notNull(),
     start_time:t.time("start_time").notNull(),
