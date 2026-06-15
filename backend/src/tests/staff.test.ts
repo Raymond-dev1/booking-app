@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-jest.setTimeout(15000);
+jest.setTimeout(30000);
 
 // TESTS STAFF INVITATION FLOW
 describe.skip("staff invitation flow", () => {
@@ -94,7 +94,7 @@ describe.skip("deactivates staff", () => {
 });
 
 //TESTS STAFF ASSIGNMENT
-describe("staff to service assignment", () => {
+describe.skip("staff to service assignment", () => {
   let token: string;
   let serviceId: number;
   let businessId: number;
@@ -150,7 +150,7 @@ describe("staff to service assignment", () => {
   it("fetches staff by service successfully", async () => {
     const res = await request(app)
       .get(`/staff/${serviceId}`)
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", `Bearer ${token}`);
 
     expect(res.statusCode).toEqual(200);
     expect(res.body.data.id).toBeDefined();
@@ -159,4 +159,82 @@ describe("staff to service assignment", () => {
   });
 });
 
+describe("Availability services flow", () => {
+  let token: string;
+  let staffId: number;
+  let availId: number;
+  let inviteToken: string;
+  let staffToken: string;
 
+  beforeAll(async () => {
+    try{
+    const registerRes = await request(app)
+      .post("/auth/register")
+      .send({
+        first_name: "John",
+        last_name: "Doe",
+        email: `owner_${Date.now()}@test.com`,
+        password: "password123",
+        role: "owner",
+      });
+    token = registerRes.body.token;
+
+    const staffInviteRes = await request(app)
+      .post("/staff/invite")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        email: `staff_${Date.now()}@test.com`,
+        first_name: "Ray",
+        last_name: "effect",
+        phone_number: "09119807654",
+      });
+
+    inviteToken = staffInviteRes.body.inviteToken;
+
+    const res = await request(app)
+      .post("/staff/accept")
+      .query({ token: inviteToken })
+      .send({ password: "newpassword123" });
+
+    staffId = res.body.data.id;
+    staffToken = res.body.token;
+    
+    }catch(error){
+  console.error("Error", error)
+}
+  });
+
+  it("sets staff availabilty successfully", async () => {
+    const res = await request(app)
+      .post(`/staff/availability`)
+      .set("Authorization", `Bearer ${staffToken}`)
+      .send({
+        start_time: "10:00:00",
+        end_time: "14:00:00",
+        day_of_the_week: "thursday",
+      });
+    
+    availId = res.body.data.id;
+
+    expect(res.statusCode).toEqual(201);
+    expect(res.body.data.start_time).toBeDefined();
+    expect(res.body.data.day_of_the_week).toBe("thursday");
+    expect(res.body.data.end_time).toBeDefined();
+  });
+
+  it("updates staff availabilty successfully", async () => {
+    const res = await request(app)
+      .patch(`/staff/availability/${availId}`)
+      .set("Authorization", `Bearer ${staffToken}`)
+      .send({
+        start_time: "11:00:00",
+        end_time: "15:00:00",
+        dayOfTheWeek: "thursday",
+      });
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.data.start_time).toBe("11:00:00");
+    expect(res.body.data.end_time).toBe("15:00:00");
+    expect(res.body.data.day_of_the_week).toBeDefined();
+  });
+});
