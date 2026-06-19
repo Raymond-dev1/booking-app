@@ -125,7 +125,11 @@ export const getStaffByService = async(serviceId:number ) =>{
         }).from(staff_services).innerJoin(users, eq(staff_services.staff_id, users.id))
         .where(eq(staff_services.service_id, serviceId))
 
-        return {status:200, success:true, message: "Staff retrieved successfully", data:staff[0]}
+        if(!staff.length){
+            return{status:404, success:false, message: " No staff available for this service"}
+        }
+
+        return {status:200, success:true, message: "Staff retrieved successfully", data:staff}
     }catch(error){
         console.error("Error retrieving staff by service", error)
         return {status:500, success:false, message: "Internal server error"}
