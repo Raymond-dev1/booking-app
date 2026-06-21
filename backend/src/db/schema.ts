@@ -74,14 +74,17 @@ export const staff_availability =pgTable("staff_availability", {
 
 export const bookings =pgTable("bookings", {
     id:t.integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    idempotency_key:t.varchar("idempotency_key").unique().notNull(),
     business_id: t.integer("business_id").references(()=> businesses.id, {onDelete: "cascade"} ),
     service_id: t.integer("service_id").references(() => services.id, {onDelete: "restrict"} ),
     staff_id: t.integer("staff_id").references(() => users.id, {onDelete: "set null"} ),
     customer_id: t.integer("customer_id").references(() => users.id, {onDelete: "set null"} ),
     guest_email:t.varchar("guest_email", {length:256}),
-    guest_phone:t.varchar("guest_phone", {length:20}).notNull(),
+    guest_phone:t.varchar("guest_phone", {length:20}),
     start_time:t.time("start_time").notNull(),
     end_time:t.time("end_time").notNull(),
+    date:t.date("date").notNull(),
+    version:t.integer("version").default(1),
     status:bookingStatusEnum("status").default("pending"),
     payment_status:paymentStatusEnum("payment_status").default("unpaid"),
     stripe_payment_intent_id: t.varchar("stripe_payment_intent_id", {length:256}),
