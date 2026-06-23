@@ -10,6 +10,7 @@ import {
 } from "../db/schema.js";
 import { getStaffByService } from "./staff.service.js";
 import { addMinutes } from "../utils/time.js";
+import { transitionStatus } from "../utils/bookingTransition.js";
 
 interface availabilityEngineInput {
   service_id: number;
@@ -17,17 +18,17 @@ interface availabilityEngineInput {
 }
 
 interface BookingInput{
-  business_id:number,
-   service_id:number,
-    staff_id:number,
-     customer_id:number,
-     start_time:string,
-      end_time:string,
-     idempotency_key: string,
-     date:string
+  business_id:number;
+   service_id:number;
+    staff_id:number;
+     customer_id:number;
+     start_time:string;
+      end_time:string;
+     idempotency_key: string;
+     date:string;
 }
 
-type bookingStatus = 
+export type bookingStatus = 
  | "pending"
   | "confirmed"
   | "cancelled"
@@ -204,4 +205,26 @@ export const  createBooking = async({ business_id, service_id, staff_id, custome
 }
 
 
-// export const confirmBooking = async ({staff_id, booking_id,   }, )
+export const confirmBooking = async ( {staff_id}:Partial<BookingInput>, booking_id: number ) => {
+  try{
+    const confirmedBooking = await db.select().from(bookings).where(and(eq(bookings.id, booking_id), eq(bookings.status, "confirmed")))
+    if(confirmedBooking.length){
+      return {status:409, success:false, message : "Booking already confirmed"}
+    }
+    const current :bookingStatus= "pending";
+    const next: bookingStatus = "confirmed";
+
+    const result =  transitionStatus( current, next)
+    if(result.success)
+      return;
+    
+    const confirmBooking = await db.update(bookings).set({
+      status: "confirmed",
+    }).where(and(eq(bookings.staff_id, staff_id!), eq(bookings.id , booking_id))).returning()
+    
+    return {status:200, success: true, message: "Booking successfully confirmed", data: confirmBooking}
+  }catch(error){
+    console.error("Error confirming booking", error)
+   return {status:500, success:false, message: "Internal server error"}
+  }
+}

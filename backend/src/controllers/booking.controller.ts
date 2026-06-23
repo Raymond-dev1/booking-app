@@ -1,4 +1,4 @@
-import { checkStaffAvailability, createBooking } from "../services/booking.service.js";
+import { checkStaffAvailability, confirmBooking, createBooking } from "../services/booking.service.js";
 
 export const CheckStaffAvailabilityController =async(req:any, res:any) => {
     try{
@@ -32,3 +32,18 @@ export const CreateBookingController = async(req: any, res:any) => {
     }
 }
 
+export const ConfirmBookingController = async (req:any, res:any) =>{
+    try{
+        const staff_id = req.user.id
+        const {booking_id}= req.body
+
+        const booking= await confirmBooking({staff_id}, booking_id)
+        if(!booking!.success){
+            return res.status(booking!.status).json(booking)
+        }
+        return res.status(booking!.status).json(booking)
+    }catch(error){
+        console.error("Error in confirm booking controller", error)
+        return res.status(500).json({status:500,success:false, message: "internal server error"})
+    }
+}
