@@ -189,7 +189,7 @@ export const  createBooking = async({ business_id, service_id, staff_id, custome
         customer_id,
         start_time,
         end_time,
-        status,
+        status: "pending",
         idempotency_key,
         date,
       }).returning()
@@ -203,3 +203,5 @@ export const  createBooking = async({ business_id, service_id, staff_id, custome
   }
 }
 
+
+// export const confirmBooking = async ({staff_id, booking_id,   }, )
