@@ -18,7 +18,8 @@ export const CheckStaffAvailabilityController =async(req:any, res:any) => {
 export const CreateBookingController = async(req: any, res:any) => {
     try{
         const customer_id = req.user.id
-        const { business_id, service_id, staff_id, start_time, end_time, idempotency_key, date,status } =req.body
+        const idempotency_key = req.headers["Idempotency-Key"];
+        const { business_id, service_id, staff_id, start_time, end_time, date,status } =req.body
         
         const newBooking = await createBooking({ business_id, service_id, staff_id, customer_id, start_time, end_time, idempotency_key, date},  status )
         if(!newBooking.success){
