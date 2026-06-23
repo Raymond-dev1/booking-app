@@ -4,6 +4,7 @@ import authRoutes from "./auth.routes.js"
 import businessroutes from "./business.routes.js"
 import staffRoutes from "./staff.routes.js"
 import serviceRoutes from "./service.routes.js"
+import bookingRoutes from "../routes/booking.routes.js"
 
 dotenv.config()
 
@@ -13,5 +14,6 @@ router.use("/auth", authRoutes)
 router.use("/business", businessroutes)
 router.use("/staff", staffRoutes)
 router.use("/service", serviceRoutes)
+router.use("/bookings", bookingRoutes)
 
 export default router
