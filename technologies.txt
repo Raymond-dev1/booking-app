@@ -1,0 +1,20 @@
+Frontend
+language- typescript, tailwind, react
+PM- pnpm
+
+
+
+Backend 
+Db- postgres
+ORM - drizzle
+validations- zod
+DB_hosting- Neon
+payment- stripec
+docker
+logging-winston
+monitoring - promewtheus/grafana
+ci-cd- github actions 
+mail delivery - nodemailer
+Task/background jobs scheduling - Bull mq 
+Hosting- Railway
+testing-jest/supertest
