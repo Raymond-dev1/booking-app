@@ -33,4 +33,11 @@ This project was mainly developed for familiarity with production-level systems 
 - Guest --- books staff -- view past bookings with email
 
 ## Layers
-This project covers layers such as server, Auth,  Database[PostgreSQL], inputs validation , Email delivery, Concurrency, and duplicate booking prevention. 
+This project covers layers such as ; 
+- server, 
+- Auth,  
+- Database[PostgreSQL], 
+- input validation , 
+- Email delivery, 
+- Concurrency/Race condition, 
+- and duplicate booking prevention. 
