@@ -26,8 +26,7 @@ This project was mainly developed for familiarity with production-level systems 
   - customer
   - staff
   - guest
-
-## User Journey
+### User Journey
 - Onwer creates business --  creates service --  onboards staff -- assign staff to service -- manages bookings, staff and services.
 - Staff --- sets availability --- deliver bookings -- manages upcoming bookings
 - customer -- books staff -- review past bookings 
