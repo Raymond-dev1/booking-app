@@ -17,8 +17,10 @@ This project was mainly developed for familiarity with production-level systems 
 
 - Production-grade tools & concepts:- From observability to idempotency to concurrency, it allows the implementation of these distributed system concepts, without overengineering the actual project 
 
+- Test-driven development:- end-to-end tests covering areas involving CRUD operations.
+
 - Solid software architectural decisions:- With efficient system design expanding from the staff onboarding feature to the staff availability engine to the booking engine. The project helps reinforce the ability to think about systems.
->System designs can be found in the backend README
+>System designs can be found in the backend README file.
 
 ## How does it work?
  Entities
@@ -35,9 +37,12 @@ This project was mainly developed for familiarity with production-level systems 
 ## Layers
 This project covers layers such as ; 
 - server, 
-- Auth,  
-- Database[PostgreSQL], 
-- input validation , 
+- Authentication,
+- RBAC & tenant data isolation 
+- Database modeling [PostgreSQL], 
+- input validation,
+- Functional testing,
 - Email delivery, 
 - Concurrency/Race condition, 
-- and duplicate booking prevention. 
+- Duplicate booking prevention.
+- Payment integration
